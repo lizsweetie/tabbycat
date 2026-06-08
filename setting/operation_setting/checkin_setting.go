@@ -1,6 +1,6 @@
 package operation_setting
 
-import "github.com/QuantumNous/new-api/setting/config"
+import "github.com/QuantumNous/tabbycat/setting/config"
 
 // CheckinSetting 签到功能配置
 type CheckinSetting struct {
@@ -11,9 +11,9 @@ type CheckinSetting struct {
 
 // 默认配置
 var checkinSetting = CheckinSetting{
-	Enabled:  false, // 默认关闭
-	MinQuota: 1000,  // 默认最小额度 1000 (约 0.002 USD)
-	MaxQuota: 10000, // 默认最大额度 10000 (约 0.02 USD)
+	Enabled:  true,     // 默认开启
+	MinQuota: 25000000, // $50 USD (500,000 units = $1)
+	MaxQuota: 25000000, // $50 USD fixed daily reward
 }
 
 func init() {

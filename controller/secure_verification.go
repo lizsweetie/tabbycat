@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/model"
+	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/tabbycat/model"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )

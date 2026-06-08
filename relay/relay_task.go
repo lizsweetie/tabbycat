@@ -9,16 +9,16 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/constant"
-	"github.com/QuantumNous/new-api/dto"
-	"github.com/QuantumNous/new-api/model"
-	"github.com/QuantumNous/new-api/relay/channel"
-	"github.com/QuantumNous/new-api/relay/channel/task/taskcommon"
-	relaycommon "github.com/QuantumNous/new-api/relay/common"
-	relayconstant "github.com/QuantumNous/new-api/relay/constant"
-	"github.com/QuantumNous/new-api/relay/helper"
-	"github.com/QuantumNous/new-api/service"
+	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/tabbycat/constant"
+	"github.com/QuantumNous/tabbycat/dto"
+	"github.com/QuantumNous/tabbycat/model"
+	"github.com/QuantumNous/tabbycat/relay/channel"
+	"github.com/QuantumNous/tabbycat/relay/channel/task/taskcommon"
+	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
+	relayconstant "github.com/QuantumNous/tabbycat/relay/constant"
+	"github.com/QuantumNous/tabbycat/relay/helper"
+	"github.com/QuantumNous/tabbycat/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -90,9 +90,9 @@ func ResolveOriginTask(c *gin.Context, info *relaycommon.RelayInfo) *dto.TaskErr
 	info.LockedChannel = ch
 
 	if originTask.ChannelId != info.ChannelId {
-		key, _, newAPIError := ch.GetNextEnabledKey()
-		if newAPIError != nil {
-			return service.TaskErrorWrapper(newAPIError, "channel_no_available_key", newAPIError.StatusCode)
+		key, _, TabbyCatError := ch.GetNextEnabledKey()
+		if TabbyCatError != nil {
+			return service.TaskErrorWrapper(TabbyCatError, "channel_no_available_key", TabbyCatError.StatusCode)
 		}
 		common.SetContextKey(c, constant.ContextKeyChannelKey, key)
 		common.SetContextKey(c, constant.ContextKeyChannelType, ch.Type)
@@ -232,7 +232,7 @@ func RelayTaskSubmit(c *gin.Context, info *relaycommon.RelayInfo) (*TaskSubmitRe
 		otherRatios = map[string]float64{}
 	}
 	ratiosJSON, _ := common.Marshal(otherRatios)
-	c.Header("X-New-Api-Other-Ratios", string(ratiosJSON))
+	c.Header("X-tabbycat-Other-Ratios", string(ratiosJSON))
 
 	// 11. 解析响应
 	upstreamTaskID, taskData, taskErr := adaptor.DoResponse(c, resp, info)

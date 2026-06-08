@@ -7,20 +7,20 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/constant"
-	"github.com/QuantumNous/new-api/dto"
-	"github.com/QuantumNous/new-api/logger"
-	relaycommon "github.com/QuantumNous/new-api/relay/common"
-	"github.com/QuantumNous/new-api/relay/helper"
-	"github.com/QuantumNous/new-api/service"
-	"github.com/QuantumNous/new-api/setting/model_setting"
-	"github.com/QuantumNous/new-api/types"
+	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/tabbycat/constant"
+	"github.com/QuantumNous/tabbycat/dto"
+	"github.com/QuantumNous/tabbycat/logger"
+	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
+	"github.com/QuantumNous/tabbycat/relay/helper"
+	"github.com/QuantumNous/tabbycat/service"
+	"github.com/QuantumNous/tabbycat/setting/model_setting"
+	"github.com/QuantumNous/tabbycat/types"
 
 	"github.com/gin-gonic/gin"
 )
 
-func ImageHelper(c *gin.Context, info *relaycommon.RelayInfo) (newAPIError *types.NewAPIError) {
+func ImageHelper(c *gin.Context, info *relaycommon.RelayInfo) (TabbyCatError *types.TabbyCatError) {
 	info.InitChannelMeta(c)
 
 	imageReq, ok := info.Request.(*dto.ImageRequest)
@@ -72,7 +72,7 @@ func ImageHelper(c *gin.Context, info *relaycommon.RelayInfo) (newAPIError *type
 			if len(info.ParamOverride) > 0 {
 				jsonData, err = relaycommon.ApplyParamOverrideWithRelayInfo(jsonData, info)
 				if err != nil {
-					return newAPIErrorFromParamOverride(err)
+					return TabbyCatErrorFromParamOverride(err)
 				}
 			}
 
@@ -103,19 +103,19 @@ func ImageHelper(c *gin.Context, info *relaycommon.RelayInfo) (newAPIError *type
 				// replicate channel returns 201 Created when using Prefer: wait, treat it as success.
 				httpResp.StatusCode = http.StatusOK
 			} else {
-				newAPIError = service.RelayErrorHandler(c.Request.Context(), httpResp, false)
+				TabbyCatError = service.RelayErrorHandler(c.Request.Context(), httpResp, false)
 				// reset status code 重置状态码
-				service.ResetStatusCode(newAPIError, statusCodeMappingStr)
-				return newAPIError
+				service.ResetStatusCode(TabbyCatError, statusCodeMappingStr)
+				return TabbyCatError
 			}
 		}
 	}
 
-	usage, newAPIError := adaptor.DoResponse(c, httpResp, info)
-	if newAPIError != nil {
+	usage, TabbyCatError := adaptor.DoResponse(c, httpResp, info)
+	if TabbyCatError != nil {
 		// reset status code 重置状态码
-		service.ResetStatusCode(newAPIError, statusCodeMappingStr)
-		return newAPIError
+		service.ResetStatusCode(TabbyCatError, statusCodeMappingStr)
+		return TabbyCatError
 	}
 
 	imageN := uint(1)

@@ -15,20 +15,20 @@ import (
 	"sync"
 	"time"
 
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/constant"
-	"github.com/QuantumNous/new-api/dto"
-	"github.com/QuantumNous/new-api/middleware"
-	"github.com/QuantumNous/new-api/model"
-	"github.com/QuantumNous/new-api/pkg/billingexpr"
-	"github.com/QuantumNous/new-api/relay"
-	relaycommon "github.com/QuantumNous/new-api/relay/common"
-	relayconstant "github.com/QuantumNous/new-api/relay/constant"
-	"github.com/QuantumNous/new-api/relay/helper"
-	"github.com/QuantumNous/new-api/service"
-	"github.com/QuantumNous/new-api/setting/operation_setting"
-	"github.com/QuantumNous/new-api/setting/ratio_setting"
-	"github.com/QuantumNous/new-api/types"
+	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/tabbycat/constant"
+	"github.com/QuantumNous/tabbycat/dto"
+	"github.com/QuantumNous/tabbycat/middleware"
+	"github.com/QuantumNous/tabbycat/model"
+	"github.com/QuantumNous/tabbycat/pkg/billingexpr"
+	"github.com/QuantumNous/tabbycat/relay"
+	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
+	relayconstant "github.com/QuantumNous/tabbycat/relay/constant"
+	"github.com/QuantumNous/tabbycat/relay/helper"
+	"github.com/QuantumNous/tabbycat/service"
+	"github.com/QuantumNous/tabbycat/setting/operation_setting"
+	"github.com/QuantumNous/tabbycat/setting/ratio_setting"
+	"github.com/QuantumNous/tabbycat/types"
 
 	"github.com/bytedance/gopkg/util/gopool"
 	"github.com/samber/lo"
@@ -40,7 +40,7 @@ import (
 type testResult struct {
 	context     *gin.Context
 	localErr    error
-	newAPIError *types.NewAPIError
+	TabbyCatError *types.TabbyCatError
 }
 
 func normalizeChannelTestEndpoint(channel *model.Channel, modelName, endpointType string) string {
@@ -164,7 +164,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 	if err != nil {
 		return testResult{
 			localErr:    err,
-			newAPIError: nil,
+			TabbyCatError: nil,
 		}
 	}
 	cache.WriteContext(c)
@@ -177,12 +177,12 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 	group, _ := model.GetUserGroup(testUserID, false)
 	c.Set("group", group)
 
-	newAPIError := middleware.SetupContextForSelectedChannel(c, channel, testModel)
-	if newAPIError != nil {
+	TabbyCatError := middleware.SetupContextForSelectedChannel(c, channel, testModel)
+	if TabbyCatError != nil {
 		return testResult{
 			context:     c,
-			localErr:    newAPIError,
-			newAPIError: newAPIError,
+			localErr:    TabbyCatError,
+			TabbyCatError: TabbyCatError,
 		}
 	}
 
@@ -244,7 +244,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 		return testResult{
 			context:     c,
 			localErr:    err,
-			newAPIError: types.NewError(err, types.ErrorCodeGenRelayInfoFailed),
+			TabbyCatError: types.NewError(err, types.ErrorCodeGenRelayInfoFailed),
 		}
 	}
 
@@ -256,7 +256,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 		return testResult{
 			context:     c,
 			localErr:    err,
-			newAPIError: types.NewError(err, types.ErrorCodeJsonMarshalFailed),
+			TabbyCatError: types.NewError(err, types.ErrorCodeJsonMarshalFailed),
 		}
 	}
 
@@ -265,7 +265,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 		return testResult{
 			context:     c,
 			localErr:    err,
-			newAPIError: types.NewError(err, types.ErrorCodeChannelModelMappedError),
+			TabbyCatError: types.NewError(err, types.ErrorCodeChannelModelMappedError),
 		}
 	}
 
@@ -280,7 +280,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 		return testResult{
 			context:     c,
 			localErr:    fmt.Errorf("responses compaction test only supports openai/codex channels, got api type %d", apiType),
-			newAPIError: types.NewError(fmt.Errorf("unsupported api type: %d", apiType), types.ErrorCodeInvalidApiType),
+			TabbyCatError: types.NewError(fmt.Errorf("unsupported api type: %d", apiType), types.ErrorCodeInvalidApiType),
 		}
 	}
 	adaptor := relay.GetAdaptor(apiType)
@@ -288,7 +288,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 		return testResult{
 			context:     c,
 			localErr:    fmt.Errorf("invalid api type: %d, adaptor is nil", apiType),
-			newAPIError: types.NewError(fmt.Errorf("invalid api type: %d, adaptor is nil", apiType), types.ErrorCodeInvalidApiType),
+			TabbyCatError: types.NewError(fmt.Errorf("invalid api type: %d, adaptor is nil", apiType), types.ErrorCodeInvalidApiType),
 		}
 	}
 
@@ -302,7 +302,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 		return testResult{
 			context:     c,
 			localErr:    err,
-			newAPIError: types.NewError(err, types.ErrorCodeModelPriceError, types.ErrOptionWithStatusCode(http.StatusBadRequest)),
+			TabbyCatError: types.NewError(err, types.ErrorCodeModelPriceError, types.ErrOptionWithStatusCode(http.StatusBadRequest)),
 		}
 	}
 
@@ -319,7 +319,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 			return testResult{
 				context:     c,
 				localErr:    errors.New("invalid embedding request type"),
-				newAPIError: types.NewError(errors.New("invalid embedding request type"), types.ErrorCodeConvertRequestFailed),
+				TabbyCatError: types.NewError(errors.New("invalid embedding request type"), types.ErrorCodeConvertRequestFailed),
 			}
 		}
 	case relayconstant.RelayModeImagesGenerations:
@@ -330,7 +330,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 			return testResult{
 				context:     c,
 				localErr:    errors.New("invalid image request type"),
-				newAPIError: types.NewError(errors.New("invalid image request type"), types.ErrorCodeConvertRequestFailed),
+				TabbyCatError: types.NewError(errors.New("invalid image request type"), types.ErrorCodeConvertRequestFailed),
 			}
 		}
 	case relayconstant.RelayModeRerank:
@@ -341,7 +341,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 			return testResult{
 				context:     c,
 				localErr:    errors.New("invalid rerank request type"),
-				newAPIError: types.NewError(errors.New("invalid rerank request type"), types.ErrorCodeConvertRequestFailed),
+				TabbyCatError: types.NewError(errors.New("invalid rerank request type"), types.ErrorCodeConvertRequestFailed),
 			}
 		}
 	case relayconstant.RelayModeResponses:
@@ -352,7 +352,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 			return testResult{
 				context:     c,
 				localErr:    errors.New("invalid response request type"),
-				newAPIError: types.NewError(errors.New("invalid response request type"), types.ErrorCodeConvertRequestFailed),
+				TabbyCatError: types.NewError(errors.New("invalid response request type"), types.ErrorCodeConvertRequestFailed),
 			}
 		}
 	case relayconstant.RelayModeResponsesCompact:
@@ -371,7 +371,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 			return testResult{
 				context:     c,
 				localErr:    errors.New("invalid response compaction request type"),
-				newAPIError: types.NewError(errors.New("invalid response compaction request type"), types.ErrorCodeConvertRequestFailed),
+				TabbyCatError: types.NewError(errors.New("invalid response compaction request type"), types.ErrorCodeConvertRequestFailed),
 			}
 		}
 	default:
@@ -382,7 +382,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 			return testResult{
 				context:     c,
 				localErr:    errors.New("invalid general request type"),
-				newAPIError: types.NewError(errors.New("invalid general request type"), types.ErrorCodeConvertRequestFailed),
+				TabbyCatError: types.NewError(errors.New("invalid general request type"), types.ErrorCodeConvertRequestFailed),
 			}
 		}
 	}
@@ -391,7 +391,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 		return testResult{
 			context:     c,
 			localErr:    err,
-			newAPIError: types.NewError(err, types.ErrorCodeConvertRequestFailed),
+			TabbyCatError: types.NewError(err, types.ErrorCodeConvertRequestFailed),
 		}
 	}
 	jsonData, err := common.Marshal(convertedRequest)
@@ -399,7 +399,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 		return testResult{
 			context:     c,
 			localErr:    err,
-			newAPIError: types.NewError(err, types.ErrorCodeJsonMarshalFailed),
+			TabbyCatError: types.NewError(err, types.ErrorCodeJsonMarshalFailed),
 		}
 	}
 
@@ -408,7 +408,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 	//	return testResult{
 	//		context:     c,
 	//		localErr:    err,
-	//		newAPIError: types.NewError(err, types.ErrorCodeConvertRequestFailed),
+	//		TabbyCatError: types.NewError(err, types.ErrorCodeConvertRequestFailed),
 	//	}
 	//}
 
@@ -419,13 +419,13 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 				return testResult{
 					context:     c,
 					localErr:    fixedErr,
-					newAPIError: relaycommon.NewAPIErrorFromParamOverride(fixedErr),
+					TabbyCatError: relaycommon.TabbyCatErrorFromParamOverride(fixedErr),
 				}
 			}
 			return testResult{
 				context:     c,
 				localErr:    err,
-				newAPIError: types.NewError(err, types.ErrorCodeChannelParamOverrideInvalid),
+				TabbyCatError: types.NewError(err, types.ErrorCodeChannelParamOverrideInvalid),
 			}
 		}
 	}
@@ -437,7 +437,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 		return testResult{
 			context:     c,
 			localErr:    err,
-			newAPIError: types.NewOpenAIError(err, types.ErrorCodeDoRequestFailed, http.StatusInternalServerError),
+			TabbyCatError: types.NewOpenAIError(err, types.ErrorCodeDoRequestFailed, http.StatusInternalServerError),
 		}
 	}
 	var httpResp *http.Response
@@ -458,7 +458,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 			return testResult{
 				context:     c,
 				localErr:    err,
-				newAPIError: types.NewOpenAIError(err, types.ErrorCodeBadResponse, http.StatusInternalServerError),
+				TabbyCatError: types.NewOpenAIError(err, types.ErrorCodeBadResponse, http.StatusInternalServerError),
 			}
 		}
 	}
@@ -467,7 +467,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 		return testResult{
 			context:     c,
 			localErr:    respErr,
-			newAPIError: respErr,
+			TabbyCatError: respErr,
 		}
 	}
 	usage, usageErr := coerceTestUsage(usageA, isStream, info.GetEstimatePromptTokens())
@@ -475,7 +475,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 		return testResult{
 			context:     c,
 			localErr:    usageErr,
-			newAPIError: types.NewOpenAIError(usageErr, types.ErrorCodeBadResponseBody, http.StatusInternalServerError),
+			TabbyCatError: types.NewOpenAIError(usageErr, types.ErrorCodeBadResponseBody, http.StatusInternalServerError),
 		}
 	}
 	result := w.Result()
@@ -484,14 +484,14 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 		return testResult{
 			context:     c,
 			localErr:    err,
-			newAPIError: types.NewOpenAIError(err, types.ErrorCodeReadResponseBodyFailed, http.StatusInternalServerError),
+			TabbyCatError: types.NewOpenAIError(err, types.ErrorCodeReadResponseBodyFailed, http.StatusInternalServerError),
 		}
 	}
 	if bodyErr := validateTestResponseBody(respBody, isStream); bodyErr != nil {
 		return testResult{
 			context:     c,
 			localErr:    bodyErr,
-			newAPIError: types.NewOpenAIError(bodyErr, types.ErrorCodeBadResponseBody, http.StatusInternalServerError),
+			TabbyCatError: types.NewOpenAIError(bodyErr, types.ErrorCodeBadResponseBody, http.StatusInternalServerError),
 		}
 	}
 	info.SetEstimatePromptTokens(usage.PromptTokens)
@@ -518,7 +518,7 @@ func testChannel(channel *model.Channel, testUserID int, testModel string, endpo
 	return testResult{
 		context:     c,
 		localErr:    nil,
-		newAPIError: nil,
+		TabbyCatError: nil,
 	}
 }
 
@@ -864,8 +864,8 @@ func TestChannel(c *gin.Context) {
 			"message": result.localErr.Error(),
 			"time":    0.0,
 		}
-		if result.newAPIError != nil {
-			resp["error_code"] = result.newAPIError.GetErrorCode()
+		if result.TabbyCatError != nil {
+			resp["error_code"] = result.TabbyCatError.GetErrorCode()
 		}
 		c.JSON(http.StatusOK, resp)
 		return
@@ -874,12 +874,12 @@ func TestChannel(c *gin.Context) {
 	milliseconds := tok.Sub(tik).Milliseconds()
 	go channel.UpdateResponseTime(milliseconds)
 	consumedTime := float64(milliseconds) / 1000.0
-	if result.newAPIError != nil {
+	if result.TabbyCatError != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success":    false,
-			"message":    result.newAPIError.Error(),
+			"message":    result.TabbyCatError.Error(),
 			"time":       consumedTime,
-			"error_code": result.newAPIError.GetErrorCode(),
+			"error_code": result.TabbyCatError.GetErrorCode(),
 		})
 		return
 	}
@@ -933,28 +933,28 @@ func testAllChannels(notify bool) error {
 			milliseconds := tok.Sub(tik).Milliseconds()
 
 			shouldBanChannel := false
-			newAPIError := result.newAPIError
+			TabbyCatError := result.TabbyCatError
 			// request error disables the channel
-			if newAPIError != nil {
-				shouldBanChannel = service.ShouldDisableChannel(result.newAPIError)
+			if TabbyCatError != nil {
+				shouldBanChannel = service.ShouldDisableChannel(result.TabbyCatError)
 			}
 
 			// 当错误检查通过，才检查响应时间
 			if common.AutomaticDisableChannelEnabled && !shouldBanChannel {
 				if milliseconds > disableThreshold {
 					err := fmt.Errorf("响应时间 %.2fs 超过阈值 %.2fs", float64(milliseconds)/1000.0, float64(disableThreshold)/1000.0)
-					newAPIError = types.NewOpenAIError(err, types.ErrorCodeChannelResponseTimeExceeded, http.StatusRequestTimeout)
+					TabbyCatError = types.NewOpenAIError(err, types.ErrorCodeChannelResponseTimeExceeded, http.StatusRequestTimeout)
 					shouldBanChannel = true
 				}
 			}
 
 			// disable channel
 			if isChannelEnabled && shouldBanChannel && channel.GetAutoBan() {
-				processChannelError(result.context, *types.NewChannelError(channel.Id, channel.Type, channel.Name, channel.ChannelInfo.IsMultiKey, common.GetContextKeyString(result.context, constant.ContextKeyChannelKey), channel.GetAutoBan()), newAPIError)
+				processChannelError(result.context, *types.NewChannelError(channel.Id, channel.Type, channel.Name, channel.ChannelInfo.IsMultiKey, common.GetContextKeyString(result.context, constant.ContextKeyChannelKey), channel.GetAutoBan()), TabbyCatError)
 			}
 
 			// enable channel
-			if !isChannelEnabled && service.ShouldEnableChannel(newAPIError, channel.Status) {
+			if !isChannelEnabled && service.ShouldEnableChannel(TabbyCatError, channel.Status) {
 				service.EnableChannel(channel.Id, common.GetContextKeyString(result.context, constant.ContextKeyChannelKey), channel.Name)
 			}
 

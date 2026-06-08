@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/tabbycat/common"
 )
 
 const (

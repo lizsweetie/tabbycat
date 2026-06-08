@@ -13,24 +13,24 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/constant"
-	"github.com/QuantumNous/new-api/dto"
-	"github.com/QuantumNous/new-api/logger"
-	"github.com/QuantumNous/new-api/relay/channel"
-	"github.com/QuantumNous/new-api/relay/channel/ai360"
-	"github.com/QuantumNous/new-api/relay/channel/lingyiwanwu"
+	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/tabbycat/constant"
+	"github.com/QuantumNous/tabbycat/dto"
+	"github.com/QuantumNous/tabbycat/logger"
+	"github.com/QuantumNous/tabbycat/relay/channel"
+	"github.com/QuantumNous/tabbycat/relay/channel/ai360"
+	"github.com/QuantumNous/tabbycat/relay/channel/lingyiwanwu"
 
-	//"github.com/QuantumNous/new-api/relay/channel/minimax"
-	"github.com/QuantumNous/new-api/relay/channel/openrouter"
-	"github.com/QuantumNous/new-api/relay/channel/xinference"
-	relaycommon "github.com/QuantumNous/new-api/relay/common"
-	"github.com/QuantumNous/new-api/relay/common_handler"
-	relayconstant "github.com/QuantumNous/new-api/relay/constant"
-	"github.com/QuantumNous/new-api/service"
-	"github.com/QuantumNous/new-api/setting/model_setting"
-	"github.com/QuantumNous/new-api/setting/reasoning"
-	"github.com/QuantumNous/new-api/types"
+	//"github.com/QuantumNous/tabbycat/relay/channel/minimax"
+	"github.com/QuantumNous/tabbycat/relay/channel/openrouter"
+	"github.com/QuantumNous/tabbycat/relay/channel/xinference"
+	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
+	"github.com/QuantumNous/tabbycat/relay/common_handler"
+	relayconstant "github.com/QuantumNous/tabbycat/relay/constant"
+	"github.com/QuantumNous/tabbycat/service"
+	"github.com/QuantumNous/tabbycat/setting/model_setting"
+	"github.com/QuantumNous/tabbycat/setting/reasoning"
+	"github.com/QuantumNous/tabbycat/types"
 	"github.com/samber/lo"
 
 	"github.com/gin-gonic/gin"
@@ -218,10 +218,10 @@ func (a *Adaptor) SetupRequestHeader(c *gin.Context, header *http.Header, info *
 	}
 	if info.ChannelType == constant.ChannelTypeOpenRouter {
 		if header.Get("HTTP-Referer") == "" {
-			header.Set("HTTP-Referer", "https://www.newapi.ai")
+			header.Set("HTTP-Referer", "https://www.TabbyCat.ai")
 		}
 		if header.Get("X-OpenRouter-Title") == "" {
-			header.Set("X-OpenRouter-Title", "New API")
+			header.Set("X-OpenRouter-Title", "TabbyCat")
 		}
 	}
 	return nil
@@ -618,7 +618,7 @@ func (a *Adaptor) DoRequest(c *gin.Context, info *relaycommon.RelayInfo, request
 	}
 }
 
-func (a *Adaptor) DoResponse(c *gin.Context, resp *http.Response, info *relaycommon.RelayInfo) (usage any, err *types.NewAPIError) {
+func (a *Adaptor) DoResponse(c *gin.Context, resp *http.Response, info *relaycommon.RelayInfo) (usage any, err *types.TabbyCatError) {
 	switch info.RelayMode {
 	case relayconstant.RelayModeRealtime:
 		err, usage = OpenaiRealtimeHandler(c, info)

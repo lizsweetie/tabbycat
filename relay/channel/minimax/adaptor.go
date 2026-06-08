@@ -8,13 +8,13 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/QuantumNous/new-api/dto"
-	"github.com/QuantumNous/new-api/relay/channel"
-	"github.com/QuantumNous/new-api/relay/channel/claude"
-	"github.com/QuantumNous/new-api/relay/channel/openai"
-	relaycommon "github.com/QuantumNous/new-api/relay/common"
-	"github.com/QuantumNous/new-api/relay/constant"
-	"github.com/QuantumNous/new-api/types"
+	"github.com/QuantumNous/tabbycat/dto"
+	"github.com/QuantumNous/tabbycat/relay/channel"
+	"github.com/QuantumNous/tabbycat/relay/channel/claude"
+	"github.com/QuantumNous/tabbycat/relay/channel/openai"
+	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
+	"github.com/QuantumNous/tabbycat/relay/constant"
+	"github.com/QuantumNous/tabbycat/types"
 
 	"github.com/gin-gonic/gin"
 	"github.com/samber/lo"
@@ -120,7 +120,7 @@ func (a *Adaptor) DoRequest(c *gin.Context, info *relaycommon.RelayInfo, request
 	return channel.DoApiRequest(a, c, info, requestBody)
 }
 
-func (a *Adaptor) DoResponse(c *gin.Context, resp *http.Response, info *relaycommon.RelayInfo) (usage any, err *types.NewAPIError) {
+func (a *Adaptor) DoResponse(c *gin.Context, resp *http.Response, info *relaycommon.RelayInfo) (usage any, err *types.TabbyCatError) {
 	if info.RelayMode == constant.RelayModeAudioSpeech {
 		return handleTTSResponse(c, resp, info)
 	}

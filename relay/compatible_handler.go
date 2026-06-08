@@ -6,23 +6,23 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/constant"
-	"github.com/QuantumNous/new-api/dto"
-	"github.com/QuantumNous/new-api/logger"
-	relaycommon "github.com/QuantumNous/new-api/relay/common"
-	relayconstant "github.com/QuantumNous/new-api/relay/constant"
-	"github.com/QuantumNous/new-api/relay/helper"
-	"github.com/QuantumNous/new-api/service"
-	"github.com/QuantumNous/new-api/setting/model_setting"
-	"github.com/QuantumNous/new-api/setting/ratio_setting"
-	"github.com/QuantumNous/new-api/types"
+	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/tabbycat/constant"
+	"github.com/QuantumNous/tabbycat/dto"
+	"github.com/QuantumNous/tabbycat/logger"
+	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
+	relayconstant "github.com/QuantumNous/tabbycat/relay/constant"
+	"github.com/QuantumNous/tabbycat/relay/helper"
+	"github.com/QuantumNous/tabbycat/service"
+	"github.com/QuantumNous/tabbycat/setting/model_setting"
+	"github.com/QuantumNous/tabbycat/setting/ratio_setting"
+	"github.com/QuantumNous/tabbycat/types"
 	"github.com/samber/lo"
 
 	"github.com/gin-gonic/gin"
 )
 
-func TextHelper(c *gin.Context, info *relaycommon.RelayInfo) (newAPIError *types.NewAPIError) {
+func TextHelper(c *gin.Context, info *relaycommon.RelayInfo) (TabbyCatError *types.TabbyCatError) {
 	info.InitChannelMeta(c)
 
 	textReq, ok := info.Request.(*dto.GeneralOpenAIRequest)
@@ -76,9 +76,9 @@ func TextHelper(c *gin.Context, info *relaycommon.RelayInfo) (newAPIError *types
 		!info.ChannelSetting.PassThroughBodyEnabled &&
 		service.ShouldChatCompletionsUseResponsesGlobal(info.ChannelId, info.ChannelType, info.OriginModelName) {
 		applySystemPromptIfNeeded(c, info, request)
-		usage, newApiErr := chatCompletionsViaResponses(c, info, adaptor, request)
-		if newApiErr != nil {
-			return newApiErr
+		usage, TabbyCatErr := chatCompletionsViaResponses(c, info, adaptor, request)
+		if TabbyCatErr != nil {
+			return TabbyCatErr
 		}
 
 		var containAudioTokens = usage.CompletionTokenDetails.AudioTokens > 0 || usage.PromptTokensDetails.AudioTokens > 0
@@ -169,7 +169,7 @@ func TextHelper(c *gin.Context, info *relaycommon.RelayInfo) (newAPIError *types
 		if len(info.ParamOverride) > 0 {
 			jsonData, err = relaycommon.ApplyParamOverrideWithRelayInfo(jsonData, info)
 			if err != nil {
-				return newAPIErrorFromParamOverride(err)
+				return TabbyCatErrorFromParamOverride(err)
 			}
 		}
 
@@ -197,18 +197,18 @@ func TextHelper(c *gin.Context, info *relaycommon.RelayInfo) (newAPIError *types
 		httpResp = resp.(*http.Response)
 		info.IsStream = info.IsStream || strings.HasPrefix(httpResp.Header.Get("Content-Type"), "text/event-stream")
 		if httpResp.StatusCode != http.StatusOK {
-			newApiErr := service.RelayErrorHandler(c.Request.Context(), httpResp, false)
+			TabbyCatErr := service.RelayErrorHandler(c.Request.Context(), httpResp, false)
 			// reset status code 重置状态码
-			service.ResetStatusCode(newApiErr, statusCodeMappingStr)
-			return newApiErr
+			service.ResetStatusCode(TabbyCatErr, statusCodeMappingStr)
+			return TabbyCatErr
 		}
 	}
 
-	usage, newApiErr := adaptor.DoResponse(c, httpResp, info)
-	if newApiErr != nil {
+	usage, TabbyCatErr := adaptor.DoResponse(c, httpResp, info)
+	if TabbyCatErr != nil {
 		// reset status code 重置状态码
-		service.ResetStatusCode(newApiErr, statusCodeMappingStr)
-		return newApiErr
+		service.ResetStatusCode(TabbyCatErr, statusCodeMappingStr)
+		return TabbyCatErr
 	}
 
 	var containAudioTokens = usage.(*dto.Usage).CompletionTokenDetails.AudioTokens > 0 || usage.(*dto.Usage).PromptTokensDetails.AudioTokens > 0

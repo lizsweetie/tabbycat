@@ -11,10 +11,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/dto"
-	"github.com/QuantumNous/new-api/logger"
-	"github.com/QuantumNous/new-api/types"
+	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/tabbycat/dto"
+	"github.com/QuantumNous/tabbycat/logger"
+	"github.com/QuantumNous/tabbycat/types"
 )
 
 func MidjourneyErrorWrapper(code int, desc string) *dto.MidjourneyResponse {
@@ -43,7 +43,7 @@ func MidjourneyErrorWithStatusCodeWrapper(code int, desc string, statusCode int)
 //	}
 //	openAIError := dto.OpenAIError{
 //		Message: text,
-//		Type:    "new_api_error",
+//		Type:    "tabbycat_error",
 //		Code:    code,
 //	}
 //	return &dto.OpenAIErrorWithStatusCode{
@@ -69,7 +69,7 @@ func ClaudeErrorWrapper(err error, code string, statusCode int) *dto.ClaudeError
 	}
 	claudeError := types.ClaudeError{
 		Message: text,
-		Type:    "new_api_error",
+		Type:    "tabbycat_error",
 	}
 	return &dto.ClaudeErrorWithStatusCode{
 		Error:      claudeError,
@@ -83,8 +83,8 @@ func ClaudeErrorWrapperLocal(err error, code string, statusCode int) *dto.Claude
 	return claudeErr
 }
 
-func RelayErrorHandler(ctx context.Context, resp *http.Response, showBodyWhenFail bool) (newApiErr *types.NewAPIError) {
-	newApiErr = types.InitOpenAIError(types.ErrorCodeBadResponseStatusCode, resp.StatusCode)
+func RelayErrorHandler(ctx context.Context, resp *http.Response, showBodyWhenFail bool) (TabbyCatErr *types.TabbyCatError) {
+	TabbyCatErr = types.InitOpenAIError(types.ErrorCodeBadResponseStatusCode, resp.StatusCode)
 
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -104,10 +104,10 @@ func RelayErrorHandler(ctx context.Context, resp *http.Response, showBodyWhenFai
 	err = common.Unmarshal(responseBody, &errResponse)
 	if err != nil {
 		if showBodyWhenFail {
-			newApiErr.Err = buildErrWithBody("")
+			TabbyCatErr.Err = buildErrWithBody("")
 		} else {
 			logger.LogError(ctx, fmt.Sprintf("bad response status code %d, body: %s", resp.StatusCode, responseBodyPreview))
-			newApiErr.Err = fmt.Errorf("bad response status code %d", resp.StatusCode)
+			TabbyCatErr.Err = fmt.Errorf("bad response status code %d", resp.StatusCode)
 		}
 		return
 	}
@@ -116,22 +116,22 @@ func RelayErrorHandler(ctx context.Context, resp *http.Response, showBodyWhenFai
 		// General format error (OpenAI, Anthropic, Gemini, etc.)
 		oaiError := errResponse.TryToOpenAIError()
 		if oaiError != nil {
-			newApiErr = types.WithOpenAIError(*oaiError, resp.StatusCode)
+			TabbyCatErr = types.WithOpenAIError(*oaiError, resp.StatusCode)
 			if showBodyWhenFail {
-				newApiErr.Err = buildErrWithBody(newApiErr.Error())
+				TabbyCatErr.Err = buildErrWithBody(TabbyCatErr.Error())
 			}
 			return
 		}
 	}
-	newApiErr = types.NewOpenAIError(errors.New(errResponse.ToMessage()), types.ErrorCodeBadResponseStatusCode, resp.StatusCode)
+	TabbyCatErr = types.NewOpenAIError(errors.New(errResponse.ToMessage()), types.ErrorCodeBadResponseStatusCode, resp.StatusCode)
 	if showBodyWhenFail {
-		newApiErr.Err = buildErrWithBody(newApiErr.Error())
+		TabbyCatErr.Err = buildErrWithBody(TabbyCatErr.Error())
 	}
 	return
 }
 
-func ResetStatusCode(newApiErr *types.NewAPIError, statusCodeMappingStr string) {
-	if newApiErr == nil {
+func ResetStatusCode(TabbyCatErr *types.TabbyCatError, statusCodeMappingStr string) {
+	if TabbyCatErr == nil {
 		return
 	}
 	if statusCodeMappingStr == "" || statusCodeMappingStr == "{}" {
@@ -142,16 +142,16 @@ func ResetStatusCode(newApiErr *types.NewAPIError, statusCodeMappingStr string) 
 	if err != nil {
 		return
 	}
-	if newApiErr.StatusCode == http.StatusOK {
+	if TabbyCatErr.StatusCode == http.StatusOK {
 		return
 	}
-	codeStr := strconv.Itoa(newApiErr.StatusCode)
+	codeStr := strconv.Itoa(TabbyCatErr.StatusCode)
 	if value, ok := statusCodeMapping[codeStr]; ok {
 		intCode, ok := parseStatusCodeMappingValue(value)
 		if !ok {
 			return
 		}
-		newApiErr.StatusCode = intCode
+		TabbyCatErr.StatusCode = intCode
 	}
 }
 
@@ -209,8 +209,8 @@ func TaskErrorWrapper(err error, code string, statusCode int) *dto.TaskError {
 	return taskError
 }
 
-// TaskErrorFromAPIError 将 PreConsumeBilling 返回的 NewAPIError 转换为 TaskError。
-func TaskErrorFromAPIError(apiErr *types.NewAPIError) *dto.TaskError {
+// TaskErrorFromAPIError 将 PreConsumeBilling 返回的 TabbyCatError 转换为 TaskError。
+func TaskErrorFromAPIError(apiErr *types.TabbyCatError) *dto.TaskError {
 	if apiErr == nil {
 		return nil
 	}

@@ -11,20 +11,20 @@ import (
 	"strings"
 	"time"
 
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/constant"
-	"github.com/QuantumNous/new-api/controller"
-	"github.com/QuantumNous/new-api/i18n"
-	"github.com/QuantumNous/new-api/logger"
-	"github.com/QuantumNous/new-api/middleware"
-	"github.com/QuantumNous/new-api/model"
-	"github.com/QuantumNous/new-api/oauth"
-	perfmetrics "github.com/QuantumNous/new-api/pkg/perf_metrics"
-	"github.com/QuantumNous/new-api/relay"
-	"github.com/QuantumNous/new-api/router"
-	"github.com/QuantumNous/new-api/service"
-	_ "github.com/QuantumNous/new-api/setting/performance_setting"
-	"github.com/QuantumNous/new-api/setting/ratio_setting"
+	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/tabbycat/constant"
+	"github.com/QuantumNous/tabbycat/controller"
+	"github.com/QuantumNous/tabbycat/i18n"
+	"github.com/QuantumNous/tabbycat/logger"
+	"github.com/QuantumNous/tabbycat/middleware"
+	"github.com/QuantumNous/tabbycat/model"
+	"github.com/QuantumNous/tabbycat/oauth"
+	perfmetrics "github.com/QuantumNous/tabbycat/pkg/perf_metrics"
+	"github.com/QuantumNous/tabbycat/relay"
+	"github.com/QuantumNous/tabbycat/router"
+	"github.com/QuantumNous/tabbycat/service"
+	_ "github.com/QuantumNous/tabbycat/setting/performance_setting"
+	"github.com/QuantumNous/tabbycat/setting/ratio_setting"
 
 	"github.com/bytedance/gopkg/util/gopool"
 	"github.com/gin-contrib/sessions"
@@ -56,7 +56,7 @@ func main() {
 		return
 	}
 
-	common.SysLog("New API " + common.Version + " started")
+	common.SysLog("TabbyCat " + common.Version + " started")
 	if os.Getenv("GIN_MODE") != "debug" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -164,8 +164,8 @@ func main() {
 		common.SysLog(fmt.Sprintf("panic detected: %v", err))
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": gin.H{
-				"message": fmt.Sprintf("Panic detected, error: %v. Please submit a issue here: https://github.com/Calcium-Ion/new-api", err),
-				"type":    "new_api_panic",
+				"message": fmt.Sprintf("Panic detected, error: %v. Please submit a issue here: https://github.com/Calcium-Ion/tabbycat", err),
+				"type":    "tabbycat_panic",
 			},
 		})
 	}))

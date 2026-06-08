@@ -7,12 +7,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/logger"
-	"github.com/QuantumNous/new-api/model"
-	"github.com/QuantumNous/new-api/service"
-	"github.com/QuantumNous/new-api/setting"
-	"github.com/QuantumNous/new-api/setting/operation_setting"
+	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/tabbycat/logger"
+	"github.com/QuantumNous/tabbycat/model"
+	"github.com/QuantumNous/tabbycat/service"
+	"github.com/QuantumNous/tabbycat/setting"
+	"github.com/QuantumNous/tabbycat/setting/operation_setting"
 	"github.com/gin-gonic/gin"
 	"github.com/shopspring/decimal"
 	"github.com/thanhpk/randstr"
@@ -306,7 +306,7 @@ func CreateWaffoPancakeSubscriptionProduct(c *gin.Context) {
 
 // ListWaffoPancakeSubscriptionProductOptions returns the OnetimeProducts
 // in the saved Pancake store, for the subscription-plan dropdown. The name
-// reflects new-api's plan concept; under the hood it's still OnetimeProducts.
+// reflects tabbycat's plan concept; under the hood it's still OnetimeProducts.
 func ListWaffoPancakeSubscriptionProductOptions(c *gin.Context) {
 	merchantID, privateKey := resolveWaffoPancakeAdminCreds("", "")
 	storeID := strings.TrimSpace(setting.WaffoPancakeStoreID)

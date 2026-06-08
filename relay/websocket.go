@@ -3,16 +3,16 @@ package relay
 import (
 	"fmt"
 
-	"github.com/QuantumNous/new-api/dto"
-	relaycommon "github.com/QuantumNous/new-api/relay/common"
-	"github.com/QuantumNous/new-api/service"
-	"github.com/QuantumNous/new-api/types"
+	"github.com/QuantumNous/tabbycat/dto"
+	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
+	"github.com/QuantumNous/tabbycat/service"
+	"github.com/QuantumNous/tabbycat/types"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
 
-func WssHelper(c *gin.Context, info *relaycommon.RelayInfo) (newAPIError *types.NewAPIError) {
+func WssHelper(c *gin.Context, info *relaycommon.RelayInfo) (TabbyCatError *types.TabbyCatError) {
 	info.InitChannelMeta(c)
 
 	adaptor := GetAdaptor(info.ApiType)
@@ -35,11 +35,11 @@ func WssHelper(c *gin.Context, info *relaycommon.RelayInfo) (newAPIError *types.
 		defer info.TargetWs.Close()
 	}
 
-	usage, newAPIError := adaptor.DoResponse(c, nil, info)
-	if newAPIError != nil {
+	usage, TabbyCatError := adaptor.DoResponse(c, nil, info)
+	if TabbyCatError != nil {
 		// reset status code 重置状态码
-		service.ResetStatusCode(newAPIError, statusCodeMappingStr)
-		return newAPIError
+		service.ResetStatusCode(TabbyCatError, statusCodeMappingStr)
+		return TabbyCatError
 	}
 	service.PostWssConsumeQuota(c, info, info.UpstreamModelName, usage.(*dto.RealtimeUsage), "")
 	return nil

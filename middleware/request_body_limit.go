@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/tabbycat/common"
 	"github.com/gin-gonic/gin"
 )
 

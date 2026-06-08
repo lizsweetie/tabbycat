@@ -5,15 +5,15 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/constant"
-	"github.com/QuantumNous/new-api/dto"
-	"github.com/QuantumNous/new-api/relay/channel"
-	openaichannel "github.com/QuantumNous/new-api/relay/channel/openai"
-	relaycommon "github.com/QuantumNous/new-api/relay/common"
-	relayconstant "github.com/QuantumNous/new-api/relay/constant"
-	"github.com/QuantumNous/new-api/service"
-	"github.com/QuantumNous/new-api/types"
+	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/tabbycat/constant"
+	"github.com/QuantumNous/tabbycat/dto"
+	"github.com/QuantumNous/tabbycat/relay/channel"
+	openaichannel "github.com/QuantumNous/tabbycat/relay/channel/openai"
+	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
+	relayconstant "github.com/QuantumNous/tabbycat/relay/constant"
+	"github.com/QuantumNous/tabbycat/service"
+	"github.com/QuantumNous/tabbycat/types"
 
 	"github.com/gin-gonic/gin"
 )
@@ -69,7 +69,7 @@ func applySystemPromptIfNeeded(c *gin.Context, info *relaycommon.RelayInfo, requ
 	}
 }
 
-func chatCompletionsViaResponses(c *gin.Context, info *relaycommon.RelayInfo, adaptor channel.Adaptor, request *dto.GeneralOpenAIRequest) (*dto.Usage, *types.NewAPIError) {
+func chatCompletionsViaResponses(c *gin.Context, info *relaycommon.RelayInfo, adaptor channel.Adaptor, request *dto.GeneralOpenAIRequest) (*dto.Usage, *types.TabbyCatError) {
 	chatJSON, err := common.Marshal(request)
 	if err != nil {
 		return nil, types.NewError(err, types.ErrorCodeConvertRequestFailed, types.ErrOptionWithSkipRetry())
@@ -83,7 +83,7 @@ func chatCompletionsViaResponses(c *gin.Context, info *relaycommon.RelayInfo, ad
 	if len(info.ParamOverride) > 0 {
 		chatJSON, err = relaycommon.ApplyParamOverrideWithRelayInfo(chatJSON, info)
 		if err != nil {
-			return nil, newAPIErrorFromParamOverride(err)
+			return nil, TabbyCatErrorFromParamOverride(err)
 		}
 	}
 
@@ -147,24 +147,24 @@ func chatCompletionsViaResponses(c *gin.Context, info *relaycommon.RelayInfo, ad
 	httpResp = resp.(*http.Response)
 	info.IsStream = info.IsStream || strings.HasPrefix(httpResp.Header.Get("Content-Type"), "text/event-stream")
 	if httpResp.StatusCode != http.StatusOK {
-		newApiErr := service.RelayErrorHandler(c.Request.Context(), httpResp, false)
-		service.ResetStatusCode(newApiErr, statusCodeMappingStr)
-		return nil, newApiErr
+		TabbyCatErr := service.RelayErrorHandler(c.Request.Context(), httpResp, false)
+		service.ResetStatusCode(TabbyCatErr, statusCodeMappingStr)
+		return nil, TabbyCatErr
 	}
 
 	if info.IsStream {
-		usage, newApiErr := openaichannel.OaiResponsesToChatStreamHandler(c, info, httpResp)
-		if newApiErr != nil {
-			service.ResetStatusCode(newApiErr, statusCodeMappingStr)
-			return nil, newApiErr
+		usage, TabbyCatErr := openaichannel.OaiResponsesToChatStreamHandler(c, info, httpResp)
+		if TabbyCatErr != nil {
+			service.ResetStatusCode(TabbyCatErr, statusCodeMappingStr)
+			return nil, TabbyCatErr
 		}
 		return usage, nil
 	}
 
-	usage, newApiErr := openaichannel.OaiResponsesToChatHandler(c, info, httpResp)
-	if newApiErr != nil {
-		service.ResetStatusCode(newApiErr, statusCodeMappingStr)
-		return nil, newApiErr
+	usage, TabbyCatErr := openaichannel.OaiResponsesToChatHandler(c, info, httpResp)
+	if TabbyCatErr != nil {
+		service.ResetStatusCode(TabbyCatErr, statusCodeMappingStr)
+		return nil, TabbyCatErr
 	}
 	return usage, nil
 }

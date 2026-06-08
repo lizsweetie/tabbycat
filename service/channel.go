@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/dto"
-	"github.com/QuantumNous/new-api/model"
-	"github.com/QuantumNous/new-api/setting/operation_setting"
-	"github.com/QuantumNous/new-api/types"
+	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/tabbycat/dto"
+	"github.com/QuantumNous/tabbycat/model"
+	"github.com/QuantumNous/tabbycat/setting/operation_setting"
+	"github.com/QuantumNous/tabbycat/types"
 )
 
 func formatNotifyType(channelId int, status int) string {
@@ -42,7 +42,7 @@ func EnableChannel(channelId int, usingKey string, channelName string) {
 	}
 }
 
-func ShouldDisableChannel(err *types.NewAPIError) bool {
+func ShouldDisableChannel(err *types.TabbyCatError) bool {
 	if !common.AutomaticDisableChannelEnabled {
 		return false
 	}
@@ -64,11 +64,11 @@ func ShouldDisableChannel(err *types.NewAPIError) bool {
 	return search
 }
 
-func ShouldEnableChannel(newAPIError *types.NewAPIError, status int) bool {
+func ShouldEnableChannel(TabbyCatError *types.TabbyCatError, status int) bool {
 	if !common.AutomaticEnableChannelEnabled {
 		return false
 	}
-	if newAPIError != nil {
+	if TabbyCatError != nil {
 		return false
 	}
 	if status != common.ChannelStatusAutoDisabled {
