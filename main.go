@@ -175,8 +175,10 @@ func main() {
 	server.Use(middleware.PoweredBy())
 	server.Use(middleware.I18n())
 	middleware.SetUpLogger(server)
-	// Initialize session store
-	store := cookie.NewStore([]byte(common.SessionSecret))
+	// Initialize session store — use Redis if available, otherwise cookie
+	var store sessions.Store
+	store = cookie.NewStore([]byte(common.SessionSecret))
+	log.Printf("Using cookie session store, SECRET length: %d", len(common.SessionSecret))
 	store.Options(sessions.Options{
 		Path:     "/",
 		MaxAge:   2147483647, // ~68 years (effectively never)

@@ -41,6 +41,7 @@ func authHelper(c *gin.Context, minRole int) {
 	status := session.Get("status")
 	useAccessToken := false
 	if username == nil {
+		common.SysLog(fmt.Sprintf("AUTH: session empty for %s %s, checking access token", c.Request.Method, c.Request.URL.Path))
 		// Check access token
 		accessToken := c.Request.Header.Get("Authorization")
 		if accessToken == "" {
