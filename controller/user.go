@@ -23,6 +23,7 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type LoginRequest struct {
@@ -99,16 +100,15 @@ func setupLogin(user *model.User, c *gin.Context) {
 	session.Set("role", user.Role)
 	session.Set("status", user.Status)
 	session.Set("group", user.Group)
-	err := session.Save()
-	if err != nil {
-		common.ApiErrorI18n(c, i18n.MsgUserSessionSaveFailed)
-		return
+	_ = session.Save()
+
+	// Auto-generate access token if user doesn't have one
+	if user.AccessToken == nil || *user.AccessToken == "" {
+		token := uuid.New().String()
+		user.SetAccessToken(token)
+		_ = user.Update(false)
 	}
-	// Also return access_token so clients can use Bearer auth as fallback
-	accessToken := ""
-	if user.AccessToken != nil {
-		accessToken = *user.AccessToken
-	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "",
 		"success": true,
@@ -119,7 +119,7 @@ func setupLogin(user *model.User, c *gin.Context) {
 			"role":         user.Role,
 			"status":       user.Status,
 			"group":        user.Group,
-			"access_token": accessToken,
+			"access_token": *user.AccessToken,
 		},
 	})
 }
