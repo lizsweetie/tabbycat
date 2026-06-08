@@ -62,30 +62,36 @@ export function useAuthRedirect() {
       saveUserId(userData.id)
     }
 
-    // Fetch and set user data
-    try {
-      const self = await getSelf()
-      if (self?.success && self.data) {
-        const user = self.data as User
-        auth.setUser(user)
-
-        // Update user ID if not already set
-        if (user.id) {
-          saveUserId(user.id)
+    // Fetch and set user data — retry a few times since the session cookie
+    // may not be flushed to the browser by the time the first request fires
+    let fetched = false
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        if (attempt > 0) {
+          await new Promise((r) => setTimeout(r, 200 * attempt))
         }
-
-        // Restore saved language preference
-        const savedLang = getSavedLanguage(user)
-        if (savedLang && savedLang !== i18n.language) {
-          i18n.changeLanguage(savedLang)
+        const self = await getSelf()
+        if (self?.success && self.data) {
+          const user = self.data as User
+          auth.setUser(user)
+          if (user.id) saveUserId(user.id)
+          const savedLang = getSavedLanguage(user)
+          if (savedLang && savedLang !== i18n.language) {
+            i18n.changeLanguage(savedLang)
+          }
+          fetched = true
+          break
         }
+      } catch {
+        // retry
       }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to fetch user data:', error)
     }
 
-    // Navigate to target page
+    if (!fetched && userData) {
+      // Fall back to partial data from login response so the user isn't stuck
+      auth.setUser(userData as User)
+    }
+
     const targetPath = redirectTo || '/dashboard'
     navigate({ to: targetPath, replace: true })
   }
