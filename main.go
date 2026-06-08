@@ -179,7 +179,7 @@ func main() {
 	store := cookie.NewStore([]byte(common.SessionSecret))
 	store.Options(sessions.Options{
 		Path:     "/",
-		MaxAge:   2592000, // 30 days
+		MaxAge:   2147483647, // ~68 years (effectively never)
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteLaxMode,
