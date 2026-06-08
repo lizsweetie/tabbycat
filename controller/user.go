@@ -104,7 +104,7 @@ func setupLogin(user *model.User, c *gin.Context) {
 
 	// Auto-generate access token if user doesn't have one
 	if user.AccessToken == nil || *user.AccessToken == "" {
-		token := uuid.New().String()
+		token := strings.ReplaceAll(uuid.New().String(), "-", "") // 32 chars, fits CHAR(32)
 		user.SetAccessToken(token)
 		_ = user.Update(false)
 	}
