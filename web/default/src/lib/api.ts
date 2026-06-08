@@ -158,13 +158,19 @@ export function getCommonHeaders(): Record<string, string> {
 // Request Interceptor
 // ============================================================================
 
-// Attach user ID header for all requests
+// Attach user ID header and Bearer token for all requests
 api.interceptors.request.use((config) => {
   const uid = getUserId()
   if (uid) {
-    // Custom header for user identification
     ;(config.headers as Record<string, string>)['tabbycat-User'] = uid
   }
+  // Use stored access token as Bearer auth — more reliable than session cookies
+  try {
+    const token = window.localStorage.getItem('access_token')
+    if (token) {
+      ;(config.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`
+    }
+  } catch { /* ignore */ }
   return config
 })
 

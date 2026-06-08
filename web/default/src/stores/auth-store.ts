@@ -94,6 +94,8 @@ export const useAuthStore = create<AuthState>()((set) => {
         set((state) => {
           if (typeof window !== 'undefined') {
             window.localStorage.removeItem('user')
+            window.localStorage.removeItem('access_token')
+            window.localStorage.removeItem('uid')
           }
           return {
             ...state,

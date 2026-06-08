@@ -54,12 +54,19 @@ export function useAuthRedirect() {
    * @param redirectTo - Redirect path after login
    */
   const handleLoginSuccess = async (
-    userData?: { id?: number } | null,
+    userData?: { id?: number; access_token?: string } | null,
     redirectTo?: string
   ) => {
     // Save user ID if available
     if (userData?.id) {
       saveUserId(userData.id)
+    }
+
+    // Store access token for Bearer auth (more reliable than session cookies)
+    if (userData?.access_token) {
+      try {
+        window.localStorage.setItem('access_token', userData.access_token)
+      } catch { /* ignore */ }
     }
 
     // Fetch and set user data — retry a few times since the session cookie

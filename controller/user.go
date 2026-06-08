@@ -104,6 +104,11 @@ func setupLogin(user *model.User, c *gin.Context) {
 		common.ApiErrorI18n(c, i18n.MsgUserSessionSaveFailed)
 		return
 	}
+	// Also return access_token so clients can use Bearer auth as fallback
+	accessToken := ""
+	if user.AccessToken != nil {
+		accessToken = *user.AccessToken
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "",
 		"success": true,
@@ -114,6 +119,7 @@ func setupLogin(user *model.User, c *gin.Context) {
 			"role":         user.Role,
 			"status":       user.Status,
 			"group":        user.Group,
+			"access_token": accessToken,
 		},
 	})
 }
