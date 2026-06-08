@@ -1,7 +1,7 @@
 package ratio_setting
 
 import (
-	"github.com/QuantumNous/tabbycat/types"
+	"github.com/QuantumNous/new-api/types"
 )
 
 var defaultCacheRatio = map[string]float64{

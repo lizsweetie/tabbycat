@@ -1,8 +1,8 @@
 package relay
 
 import (
-	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
-	"github.com/QuantumNous/tabbycat/types"
+	relaycommon "github.com/QuantumNous/new-api/relay/common"
+	"github.com/QuantumNous/new-api/types"
 )
 
 func TabbyCatErrorFromParamOverride(err error) *types.TabbyCatError {

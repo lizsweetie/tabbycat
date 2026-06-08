@@ -1,7 +1,7 @@
 package setting
 
 import (
-	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/new-api/common"
 )
 
 var autoGroups = []string{

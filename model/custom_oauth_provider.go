@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/new-api/common"
 )
 
 type accessPolicyPayload struct {

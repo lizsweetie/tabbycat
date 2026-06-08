@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/QuantumNous/tabbycat/constant"
+	"github.com/QuantumNous/new-api/constant"
 )
 
 var (
@@ -24,7 +24,7 @@ var (
 func printHelp() {
 	fmt.Println("TabbyCat(Based OneAPI) " + Version + " - The next-generation LLM gateway and AI asset management system supports multiple languages.")
 	fmt.Println("Original Project: OneAPI by JustSong - https://github.com/songquanpeng/one-api")
-	fmt.Println("Maintainer: QuantumNous - https://github.com/QuantumNous/tabbycat")
+	fmt.Println("Maintainer: QuantumNous - https://github.com/QuantumNous/new-api")
 	fmt.Println("Usage: TabbyCat [--port <port>] [--log-dir <log directory>] [--version] [--help]")
 }
 

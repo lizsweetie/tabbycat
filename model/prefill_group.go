@@ -4,7 +4,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 
-	"github.com/QuantumNous/tabbycat/common"
+	"github.com/QuantumNous/new-api/common"
 
 	"gorm.io/gorm"
 )

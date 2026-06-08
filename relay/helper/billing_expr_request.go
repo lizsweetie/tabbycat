@@ -3,10 +3,10 @@ package helper
 import (
 	"strings"
 
-	"github.com/QuantumNous/tabbycat/common"
-	"github.com/QuantumNous/tabbycat/dto"
-	"github.com/QuantumNous/tabbycat/pkg/billingexpr"
-	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/dto"
+	"github.com/QuantumNous/new-api/pkg/billingexpr"
+	relaycommon "github.com/QuantumNous/new-api/relay/common"
 	"github.com/gin-gonic/gin"
 )
 

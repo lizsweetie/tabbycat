@@ -3,9 +3,9 @@ package ratio_setting
 import (
 	"strings"
 
-	"github.com/QuantumNous/tabbycat/common"
-	"github.com/QuantumNous/tabbycat/setting/operation_setting"
-	"github.com/QuantumNous/tabbycat/types"
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/setting/operation_setting"
+	"github.com/QuantumNous/new-api/types"
 )
 
 // from songquanpeng/one-api

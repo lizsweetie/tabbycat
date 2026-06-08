@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/QuantumNous/tabbycat/common"
-	"github.com/QuantumNous/tabbycat/constant"
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/constant"
 )
 
 func cacheSetToken(token Token) error {

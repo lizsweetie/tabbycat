@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/QuantumNous/tabbycat/constant"
+	"github.com/QuantumNous/new-api/constant"
 )
 
 // ValidateRedirectURL validates that a redirect URL is safe to use.

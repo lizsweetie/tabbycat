@@ -1,6 +1,6 @@
 package common
 
-import "github.com/QuantumNous/tabbycat/constant"
+import "github.com/QuantumNous/new-api/constant"
 
 const defaultAnonymousRequestBodyLimitKB = 512
 

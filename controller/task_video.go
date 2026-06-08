@@ -7,15 +7,15 @@ import (
 	"io"
 	"time"
 
-	"github.com/QuantumNous/tabbycat/common"
-	"github.com/QuantumNous/tabbycat/constant"
-	"github.com/QuantumNous/tabbycat/dto"
-	"github.com/QuantumNous/tabbycat/logger"
-	"github.com/QuantumNous/tabbycat/model"
-	"github.com/QuantumNous/tabbycat/relay"
-	"github.com/QuantumNous/tabbycat/relay/channel"
-	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
-	"github.com/QuantumNous/tabbycat/setting/ratio_setting"
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/constant"
+	"github.com/QuantumNous/new-api/dto"
+	"github.com/QuantumNous/new-api/logger"
+	"github.com/QuantumNous/new-api/model"
+	"github.com/QuantumNous/new-api/relay"
+	"github.com/QuantumNous/new-api/relay/channel"
+	relaycommon "github.com/QuantumNous/new-api/relay/common"
+	"github.com/QuantumNous/new-api/setting/ratio_setting"
 )
 
 func UpdateVideoTaskAll(ctx context.Context, platform constant.TaskPlatform, taskChannelM map[int][]string, taskM map[string]*model.Task) error {

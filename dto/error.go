@@ -3,8 +3,8 @@ package dto
 import (
 	"encoding/json"
 
-	"github.com/QuantumNous/tabbycat/common"
-	"github.com/QuantumNous/tabbycat/types"
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/types"
 )
 
 //type OpenAIError struct {

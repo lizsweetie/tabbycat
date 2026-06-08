@@ -10,9 +10,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/QuantumNous/tabbycat/dto"
-	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
-	"github.com/QuantumNous/tabbycat/types"
+	"github.com/QuantumNous/new-api/dto"
+	relaycommon "github.com/QuantumNous/new-api/relay/common"
+	"github.com/QuantumNous/new-api/types"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"

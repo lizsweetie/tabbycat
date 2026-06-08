@@ -6,11 +6,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/QuantumNous/tabbycat/common"
-	"github.com/QuantumNous/tabbycat/logger"
-	"github.com/QuantumNous/tabbycat/model"
-	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
-	"github.com/QuantumNous/tabbycat/types"
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/logger"
+	"github.com/QuantumNous/new-api/model"
+	relaycommon "github.com/QuantumNous/new-api/relay/common"
+	"github.com/QuantumNous/new-api/types"
 
 	"github.com/bytedance/gopkg/util/gopool"
 	"github.com/gin-gonic/gin"

@@ -1,6 +1,6 @@
 package dto
 
-import "github.com/QuantumNous/tabbycat/types"
+import "github.com/QuantumNous/new-api/types"
 
 const (
 	RealtimeEventTypeError              = "error"

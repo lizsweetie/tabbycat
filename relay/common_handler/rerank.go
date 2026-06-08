@@ -4,14 +4,14 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/QuantumNous/tabbycat/common"
-	"github.com/QuantumNous/tabbycat/constant"
-	"github.com/QuantumNous/tabbycat/dto"
-	"github.com/QuantumNous/tabbycat/logger"
-	"github.com/QuantumNous/tabbycat/relay/channel/xinference"
-	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
-	"github.com/QuantumNous/tabbycat/service"
-	"github.com/QuantumNous/tabbycat/types"
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/constant"
+	"github.com/QuantumNous/new-api/dto"
+	"github.com/QuantumNous/new-api/logger"
+	"github.com/QuantumNous/new-api/relay/channel/xinference"
+	relaycommon "github.com/QuantumNous/new-api/relay/common"
+	"github.com/QuantumNous/new-api/service"
+	"github.com/QuantumNous/new-api/types"
 
 	"github.com/gin-gonic/gin"
 )

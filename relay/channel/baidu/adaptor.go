@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/QuantumNous/tabbycat/dto"
-	"github.com/QuantumNous/tabbycat/relay/channel"
-	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
-	"github.com/QuantumNous/tabbycat/relay/constant"
-	"github.com/QuantumNous/tabbycat/types"
+	"github.com/QuantumNous/new-api/dto"
+	"github.com/QuantumNous/new-api/relay/channel"
+	relaycommon "github.com/QuantumNous/new-api/relay/common"
+	"github.com/QuantumNous/new-api/relay/constant"
+	"github.com/QuantumNous/new-api/types"
 
 	"github.com/gin-gonic/gin"
 )

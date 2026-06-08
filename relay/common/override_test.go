@@ -6,11 +6,11 @@ import (
 	"reflect"
 	"testing"
 
-	common2 "github.com/QuantumNous/tabbycat/common"
-	"github.com/QuantumNous/tabbycat/types"
+	common2 "github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/types"
 
-	"github.com/QuantumNous/tabbycat/dto"
-	"github.com/QuantumNous/tabbycat/setting/model_setting"
+	"github.com/QuantumNous/new-api/dto"
+	"github.com/QuantumNous/new-api/setting/model_setting"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 )

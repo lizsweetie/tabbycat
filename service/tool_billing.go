@@ -3,8 +3,8 @@ package service
 import (
 	"math"
 
-	"github.com/QuantumNous/tabbycat/common"
-	"github.com/QuantumNous/tabbycat/setting/operation_setting"
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/setting/operation_setting"
 )
 
 // ToolCallUsage captures all tool call counts from a single request.

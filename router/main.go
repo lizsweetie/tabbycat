@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/QuantumNous/tabbycat/common"
-	"github.com/QuantumNous/tabbycat/middleware"
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/middleware"
 
 	"github.com/gin-gonic/gin"
 )

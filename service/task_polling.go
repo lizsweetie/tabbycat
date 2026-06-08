@@ -10,13 +10,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/QuantumNous/tabbycat/common"
-	"github.com/QuantumNous/tabbycat/constant"
-	"github.com/QuantumNous/tabbycat/dto"
-	"github.com/QuantumNous/tabbycat/logger"
-	"github.com/QuantumNous/tabbycat/model"
-	"github.com/QuantumNous/tabbycat/relay/channel/task/taskcommon"
-	relaycommon "github.com/QuantumNous/tabbycat/relay/common"
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/constant"
+	"github.com/QuantumNous/new-api/dto"
+	"github.com/QuantumNous/new-api/logger"
+	"github.com/QuantumNous/new-api/model"
+	"github.com/QuantumNous/new-api/relay/channel/task/taskcommon"
+	relaycommon "github.com/QuantumNous/new-api/relay/common"
 
 	"github.com/samber/lo"
 )
